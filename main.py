@@ -10,6 +10,7 @@ app = FastAPI()
 
 class ExplainRequest(BaseModel):
     text: str
+    style: str = "simple"
 
 @app.get("/")
 def root():
@@ -21,6 +22,14 @@ def explain(request:ExplainRequest):
     prompt = f"""
     you are helpful educatrional assistant,
     Explain the following topic clearly and simply.
+    
+    Explain the following topic in {request.style} style.
+
+    Make it:
+    - Clear
+    - Engaging
+    - Easy to understand
+    - Suitable for Indian students
 
     Topic: {request.text}
     """
