@@ -20,10 +20,10 @@ client = SarvamAI(api_subscription_key=SARVAM_API_KEY)
 app = FastAPI()
 
 @app.post("/upload-and-explain")
-async def upload_and_explain(file: UploadFile = File(...), style = "simple"):
+async def upload_and_explain(file: UploadFile = File(...), style = "simple", language = "Hindi"):
 
     file_bytes = await file.read()
-    extracted_text = ""
+    extracted_text = " "
 
     #extract text
     if file.filename.endswith(".pdf"):
@@ -31,23 +31,25 @@ async def upload_and_explain(file: UploadFile = File(...), style = "simple"):
             for page in pdf.pages:
                 extracted_text += page.extract_text() or ""
 
-    extracted_text = extracted_text[:4000]
+    extracted_text = extracted_text.replace("\n", " ")[:7000]
 
     prompt = f"""
-    you are a friendly Indian educational assistant.
+-You are a smart best buddy.
+-don't introduce the topic, directly start the explanation.
+-translate in a ready to speech language.
+-NO special characters.
+-Mix English and {language} language for better understanding.
+-Respond ONLY in {language}.
+-Do NOT use English in case of regional language.
+-Do NOT translate word by word.
+-Explain the concept in naturally and daily simple spoken {language} language (we don't want pure regional langauge).
+-Match the {style} vibe by using terms related to {style} and examples.
 
-    Explain the topic in {style} style.
+-The following content is only for understanding: {extracted_text}
 
-    Important:
-    - keep sentence short.
-    - Use conversationa tone.
-    - Make it sound natural when spoken.
-    - Avoid bullet points.
-    - Avoid markdown fomatting
-    - If Target language is regional language, use simple language Vocabulary.
-
-    Topic: {extracted_text}
-    """
+Remember:
+Your entire response must be in {language}.
+"""
         
             
     chat_response = client.chat.completions(
@@ -60,10 +62,10 @@ async def upload_and_explain(file: UploadFile = File(...), style = "simple"):
     explanation = chat_response.choices[0].message.content
 
     audio = client.text_to_speech.convert(
-        target_language_code = "hi-IN",
+        target_language_code = "en-IN",
         text = explanation,
         model = "bulbul:v3",
-        speaker = "ishita"
+        speaker = "suhani"
     )
 
     audio_base64 = audio.audios[0]
@@ -72,8 +74,9 @@ async def upload_and_explain(file: UploadFile = File(...), style = "simple"):
     with open("output.wav", "wb") as f:
         f.write(audio_bytes)
 
+    print(explanation)
 
     return StreamingResponse(
-        audio_bytes,
+        io.BytesIO(audio_bytes),
         media_type = "audio/wav"
     )
