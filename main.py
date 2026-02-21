@@ -9,6 +9,9 @@ import pdfplumber
 import pytesseract
 from PIL import Image
 import io
+from sarvamai.play import save
+import base64
+from fastapi.responses import StreamingResponse
 
 load_dotenv()
 SARVAM_API_KEY = os.getenv("SARVAM_API_KEY")
@@ -31,18 +34,19 @@ async def upload_and_explain(file: UploadFile = File(...), style = "simple"):
     extracted_text = extracted_text[:4000]
 
     prompt = f"""
-    you are helpful educatrional assistant,
-    Explain the following topic clearly and simply.
-    
-    Explain the following topic in {style} style.
+    you are a friendly Indian educational assistant.
 
-    Make it:
-    - Clear
-    - Engaging
-    - Easy to understand
-    - Suitable for Indian students
+    Explain the topic in {style} style.
 
-    Topic: {extracted_text}  
+    Important:
+    - keep sentence short.
+    - Use conversationa tone.
+    - Make it sound natural when spoken.
+    - Avoid bullet points.
+    - Avoid markdown fomatting
+    - If Target language is regional language, use simple language Vocabulary.
+
+    Topic: {extracted_text}
     """
         
             
@@ -54,7 +58,22 @@ async def upload_and_explain(file: UploadFile = File(...), style = "simple"):
     )
         
     explanation = chat_response.choices[0].message.content
-    return {
-        "extracted_text": extracted_text[:4000],
-        "explanation": explanation
-    }
+
+    audio = client.text_to_speech.convert(
+        target_language_code = "hi-IN",
+        text = explanation,
+        model = "bulbul:v3",
+        speaker = "ishita"
+    )
+
+    audio_base64 = audio.audios[0]
+    audio_bytes = base64.b64decode(audio_base64)
+
+    with open("output.wav", "wb") as f:
+        f.write(audio_bytes)
+
+
+    return StreamingResponse(
+        audio_bytes,
+        media_type = "audio/wav"
+    )
