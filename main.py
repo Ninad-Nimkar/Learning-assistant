@@ -1,82 +1,61 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-import requests
-import os
-from dotenv import load_dotenv
-from fastapi import UploadFile, File
-from sarvamai import SarvamAI
-import pdfplumber
-import pytesseract
-from PIL import Image
-import io
-from sarvamai.play import save
+from fastapi import FastAPI, UploadFile, File, Form
+from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
+from pathlib import Path
 import base64
-from fastapi.responses import StreamingResponse
 
-load_dotenv()
-SARVAM_API_KEY = os.getenv("SARVAM_API_KEY")
-client = SarvamAI(api_subscription_key=SARVAM_API_KEY) 
+from Services.ocr_service import extract_text
+from utils.text_cleaner import clean_text
+from Services.llm_service import summarize, explain
+from Services.tts_service import generate_audio
+
+BASE_DIR = Path(__file__).resolve().parent
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 @app.post("/upload-and-explain")
-async def upload_and_explain(file: UploadFile = File(...), style = "simple", language = "Hindi"):
-
+async def upload_and_explain(
+    file: UploadFile = File(...),
+    style: str = Form("simple"),
+    language: str = Form("hindi")
+):
     file_bytes = await file.read()
-    extracted_text = " "
 
-    #extract text
-    if file.filename.endswith(".pdf"):
-        with pdfplumber.open(io.BytesIO(file_bytes)) as pdf:
-            for page in pdf.pages:
-                extracted_text += page.extract_text() or ""
+    # 1. OCR
+    raw_text = extract_text(file_bytes, file.filename)
 
-    extracted_text = extracted_text.replace("\n", " ")[:7000]
+    if not raw_text.strip():
+        return JSONResponse(content={"error": "No text extracted from the file."}, status_code=400)
 
-    prompt = f"""
--You are a smart best buddy.
--don't introduce the topic, directly start the explanation.
--translate in a ready to speech language.
--NO special characters.
--Mix English and {language} language for better understanding.
--Respond ONLY in {language}.
--Do NOT use English in case of regional language.
--Do NOT translate word by word.
--Explain the concept in naturally and daily simple spoken {language} language (we don't want pure regional langauge).
--Match the {style} vibe by using terms related to {style} and examples.
+    # 2. Clean text
+    cleaned_text = clean_text(raw_text)
 
--The following content is only for understanding: {extracted_text}
+    # 3. Summarize
+    summary = summarize(cleaned_text)
+    summary = clean_text(summary)
 
-Remember:
-Your entire response must be in {language}.
-"""
-        
-            
-    chat_response = client.chat.completions(
-        messages=[{
-            "content": prompt,
-            "role": "user"
-        }]
-    )
-        
-    explanation = chat_response.choices[0].message.content
+    # 4. Explain
+    explanation = explain(summary, style, language)
 
-    audio = client.text_to_speech.convert(
-        target_language_code = "en-IN",
-        text = explanation,
-        model = "bulbul:v3",
-        speaker = "suhani"
-    )
+    # 5. TTS
+    audio_bytes = generate_audio(explanation)
 
-    audio_base64 = audio.audios[0]
-    audio_bytes = base64.b64decode(audio_base64)
+    # Return both audio (base64) and transcript text
+    audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
 
-    with open("output.wav", "wb") as f:
-        f.write(audio_bytes)
+    return JSONResponse(content={
+        "audio": audio_b64,
+        "transcript": explanation
+    })
 
-    print(explanation)
-
-    return StreamingResponse(
-        io.BytesIO(audio_bytes),
-        media_type = "audio/wav"
-    )
+# Serve frontend static files (must be after API routes)
+app.mount("/", StaticFiles(directory=str(BASE_DIR / "static"), html=True), name="static")
