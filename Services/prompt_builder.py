@@ -85,6 +85,26 @@ LANGUAGE_MAP = {
     "marathi": "Respond Only in simple natural daily spoken Marathi. Use English for technical terms"
 }
 
+SPEAKER_BY_LANGAUGE = {
+    "hindi": {
+        "speaker": "suhani",
+        "target_language_code": "hi-IN"
+    },
+    "english": {
+        "speaker": "manan",
+        "target_language_code": "en-IN"
+    },
+    "hinglish": {
+        "speaker": "shubh",
+        "target_language_code": "hi-IN"
+    },
+    "marathi": {
+        "speaker": "kavitha",
+        "target_language_code": "mr-IN"
+    }
+
+}
+
 def build_prompt(clean_summary: str, style: str, language: str) -> str:
     style_instruction = STYLE_MAP.get(style, STYLE_MAP["simple"])
     langauge_instruction = LANGUAGE_MAP.get(language, LANGUAGE_MAP["english"])

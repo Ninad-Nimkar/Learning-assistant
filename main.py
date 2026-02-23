@@ -47,7 +47,7 @@ async def upload_and_explain(
     explanation = explain(summary, style, language)
 
     # 5. TTS
-    audio_bytes = generate_audio(explanation)
+    audio_bytes = generate_audio(explanation, language)
 
     # Return both audio (base64) and transcript text
     audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
