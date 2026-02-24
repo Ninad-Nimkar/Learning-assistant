@@ -147,8 +147,8 @@ body {
 }
 
 .header__icon {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     color: var(--accent);
     filter: drop-shadow(0 0 8px var(--accent-glow));
 }

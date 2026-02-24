@@ -24,11 +24,37 @@
         <!-- Header -->
         <header class="header">
             <div class="header__logo">
-                <svg class="header__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                <svg class="header__icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5"
                     stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                    <path d="M2 17l10 5 10-5" />
-                    <path d="M2 12l10 5 10-5" />
+                    <defs>
+                        <linearGradient id="logo-grad" x1="4" y1="28" x2="28" y2="4" gradientUnits="userSpaceOnUse">
+                            <stop offset="0%" stop-color="#6c7bff" />
+                            <stop offset="100%" stop-color="#9b7bff" />
+                        </linearGradient>
+                    </defs>
+                    <g stroke="url(#logo-grad)" fill="none">
+                        <!-- Center petal (tallest) -->
+                        <path d="M16 4 C13 10, 13 18, 16 24 C19 18, 19 10, 16 4Z" fill="url(#logo-grad)"
+                            fill-opacity="0.12" />
+                        <!-- Left petal -->
+                        <path d="M9 8 C8 14, 11 20, 16 24 C14 18, 11 12, 9 8Z" fill="url(#logo-grad)"
+                            fill-opacity="0.08" />
+                        <!-- Right petal -->
+                        <path d="M23 8 C24 14, 21 20, 16 24 C18 18, 21 12, 23 8Z" fill="url(#logo-grad)"
+                            fill-opacity="0.08" />
+                        <!-- Far left petal -->
+                        <path d="M5 14 C6 18, 10 22, 16 24 C11 21, 7 17, 5 14Z" fill="url(#logo-grad)"
+                            fill-opacity="0.05" />
+                        <!-- Far right petal -->
+                        <path d="M27 14 C26 18, 22 22, 16 24 C21 21, 25 17, 27 14Z" fill="url(#logo-grad)"
+                            fill-opacity="0.05" />
+                        <!-- Base arc (gateway) -->
+                        <path d="M6 28 Q16 20 26 28" stroke-width="1.5" />
+                        <!-- Inner arc -->
+                        <path d="M10 27 Q16 22 22 27" stroke-width="1" opacity="0.4" />
+                    </g>
+                    <!-- Center bindu -->
+                    <circle cx="16" cy="14" r="1.2" fill="url(#logo-grad)" stroke="none" opacity="0.7" />
                 </svg>
                 <span class="header__title">Spashta<span class="header__title-dot">.</span></span>
             </div>
