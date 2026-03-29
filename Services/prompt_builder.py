@@ -80,9 +80,9 @@ Use smooth transitions and end with a reflective insight.
 
 LANGUAGE_MAP = {
     "english": "Respond in natural simple natural spoken english",
-    "hindi": "Respond Only in simple natural daily spoken Hindi. Use English for technical terms",
+    "hindi": "Respond Only in simple natural daily spoken Hindi with mixed english. Use English for technical terms",
     "hinglish": "Respond in coinversational Hinglish",
-    "marathi": "Respond Only in simple natural daily spoken Marathi. Use English for technical terms"
+    "marathi": "Respond Only in simple natural daily spoken Marathi with mixed english. Use English for technical terms"
 }
 
 SPEAKER_BY_LANGAUGE = {

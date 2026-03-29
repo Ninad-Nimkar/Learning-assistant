@@ -149,6 +149,7 @@ body {
 .header__icon {
     width: 32px;
     height: 32px;
+    object-fit: contain;
     color: var(--accent);
     filter: drop-shadow(0 0 8px var(--accent-glow));
 }
@@ -184,149 +185,30 @@ body {
     animation: fadeInUp 0.8s var(--ease-out) 0.1s both;
 }
 
-/* ── Dropzone ─────────────────────────────────────── */
-.dropzone {
+/* ── Text Input ───────────────────────────────────── */
+.text-input {
     width: 100%;
-    min-height: 200px;
-    border: 1.5px dashed var(--border-hover);
-    border-radius: var(--radius-lg);
+    min-height: 120px;
     background: var(--bg-card);
     backdrop-filter: blur(16px);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all var(--duration) var(--ease-out);
-    position: relative;
-    overflow: hidden;
-}
-
-.dropzone::before {
-    content: '';
-    position: absolute;
-    inset: 0;
+    border: 1.5px solid var(--border-hover);
     border-radius: var(--radius-lg);
-    background: radial-gradient(circle at 50% 50%, var(--accent-soft), transparent 70%);
-    opacity: 0;
-    transition: opacity var(--duration) var(--ease-out);
-}
-
-.dropzone:hover,
-.dropzone:focus-visible {
-    border-color: var(--accent);
-    box-shadow: 0 0 30px -8px var(--accent-glow), inset 0 0 30px -12px var(--accent-soft);
-}
-
-.dropzone:hover::before,
-.dropzone:focus-visible::before {
-    opacity: 1;
-}
-
-.dropzone.dragging {
-    border-color: var(--accent);
-    background: rgba(108, 123, 255, 0.06);
-    box-shadow: 0 0 40px -6px var(--accent-glow);
-    transform: scale(1.01);
-}
-
-.dropzone.has-file {
-    border-style: solid;
-    border-color: rgba(108, 123, 255, 0.25);
-}
-
-.dropzone__content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    position: relative;
-    z-index: 1;
-}
-
-.dropzone__icon-wrap {
-    width: 56px;
-    height: 56px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 16px;
-    background: var(--accent-soft);
-    transition: transform var(--duration) var(--ease-out);
-}
-
-.dropzone:hover .dropzone__icon-wrap {
-    transform: translateY(-3px);
-}
-
-.dropzone__icon {
-    width: 28px;
-    height: 28px;
-    color: var(--accent);
-}
-
-.dropzone__label {
-    font-size: 0.95rem;
-    font-weight: 600;
+    padding: 16px;
     color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    outline: none;
+    transition: all var(--duration) var(--ease-out);
 }
 
-.dropzone__hint {
-    font-size: 0.78rem;
+.text-input::placeholder {
     color: var(--text-tertiary);
 }
 
-/* File selected */
-.dropzone__file-info {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    background: var(--bg-card);
-    backdrop-filter: blur(16px);
-    z-index: 2;
-    border-radius: var(--radius-lg);
-    animation: fadeScale 0.35s var(--ease-out) both;
-}
-
-.dropzone__file-icon {
-    width: 22px;
-    height: 22px;
-    color: var(--accent);
-    flex-shrink: 0;
-}
-
-.dropzone__file-name {
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.dropzone__remove {
-    width: 28px;
-    height: 28px;
-    border: none;
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--text-secondary);
-    border-radius: 8px;
-    font-size: 1.1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-}
-
-.dropzone__remove:hover {
-    background: rgba(248, 113, 113, 0.15);
-    color: var(--error);
+.text-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 /* ── Controls (dropdowns) ─────────────────────────── */
@@ -565,7 +447,7 @@ body {
     flex-direction: column;
     gap: 24px;
     position: relative;
-    z-index: 10;
+    z-index: 1;
     animation: fadeInUp 0.7s var(--ease-out) both;
 }
 

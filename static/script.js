@@ -6,11 +6,7 @@
     'use strict';
 
     // ── DOM refs ──────────────────────────────────────
-    const dropzone = document.getElementById('dropzone');
-    const fileInput = document.getElementById('file-input');
-    const fileInfo = document.getElementById('file-info');
-    const fileNameEl = document.getElementById('file-name');
-    const removeFileBtn = document.getElementById('remove-file');
+    const textInput = document.getElementById('text-input');
     const btnGenerate = document.getElementById('btn-generate');
     const btnLoader = document.getElementById('btn-loader');
     const outputSection = document.getElementById('output-section');
@@ -28,8 +24,6 @@
     // Custom dropdown refs
     const dropdownLanguage = document.getElementById('dropdown-language');
     const dropdownStyle = document.getElementById('dropdown-style');
-
-    let selectedFile = null;
 
     // ── Helpers ───────────────────────────────────────
     function formatTime(s) {
@@ -104,63 +98,17 @@
     initDropdown(dropdownLanguage);
     initDropdown(dropdownStyle);
 
-    // ── Dropzone ──────────────────────────────────────
-    dropzone.addEventListener('click', () => fileInput.click());
-    dropzone.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
-    });
+    textInput.addEventListener('input', checkGenerateEnabled);
 
-    // Drag events
-    ['dragenter', 'dragover'].forEach(evt => {
-        dropzone.addEventListener(evt, (e) => {
-            e.preventDefault();
-            dropzone.classList.add('dragging');
-        });
-    });
-    ['dragleave', 'drop'].forEach(evt => {
-        dropzone.addEventListener(evt, (e) => {
-            e.preventDefault();
-            dropzone.classList.remove('dragging');
-        });
-    });
-    dropzone.addEventListener('drop', (e) => {
-        const file = e.dataTransfer.files[0];
-        if (file) handleFile(file);
-    });
-
-    fileInput.addEventListener('change', () => {
-        if (fileInput.files[0]) handleFile(fileInput.files[0]);
-    });
-
-    function handleFile(file) {
-        const allowed = ['application/pdf', 'image/png', 'image/jpeg', 'image/webp', 'image/bmp', 'image/tiff'];
-        if (!allowed.includes(file.type)) {
-            showToast('Please upload a PDF or image file.');
-            return;
-        }
-        selectedFile = file;
-        fileNameEl.textContent = file.name;
-        fileInfo.classList.remove('hidden');
-        dropzone.classList.add('has-file');
-        btnGenerate.disabled = false;
-    }
-
-    removeFileBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        resetFile();
-    });
-
-    function resetFile() {
-        selectedFile = null;
-        fileInput.value = '';
-        fileInfo.classList.add('hidden');
-        dropzone.classList.remove('has-file');
-        btnGenerate.disabled = true;
+    function checkGenerateEnabled() {
+        const hasText = textInput.value.trim() !== '';
+        btnGenerate.disabled = !hasText;
     }
 
     // ── Generate ──────────────────────────────────────
     btnGenerate.addEventListener('click', async () => {
-        if (!selectedFile) return;
+        const textValue = textInput.value.trim();
+        if (!textValue) return;
 
         // Read values from custom dropdowns
         const language = dropdownLanguage.dataset.value;
@@ -173,7 +121,7 @@
         outputSection.classList.add('hidden');
 
         const formData = new FormData();
-        formData.append('file', selectedFile);
+        formData.append('text', textValue);
         formData.append('language', language);
         formData.append('style', style);
 

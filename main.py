@@ -1,11 +1,10 @@
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI, Form
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 import base64
 
-from Services.ocr_service import extract_text
 from utils.text_cleaner import clean_text
 from Services.llm_service import summarize, explain
 from Services.tts_service import generate_audio
@@ -24,17 +23,14 @@ app.add_middleware(
 
 @app.post("/upload-and-explain")
 async def upload_and_explain(
-    file: UploadFile = File(...),
+    text: str = Form(...),
     style: str = Form("simple"),
     language: str = Form("hindi")
 ):
-    file_bytes = await file.read()
+    raw_text = text.strip() if text else ""
 
-    # 1. OCR
-    raw_text = extract_text(file_bytes, file.filename)
-
-    if not raw_text.strip():
-        return JSONResponse(content={"error": "No text extracted from the file."}, status_code=400)
+    if not raw_text:
+        return JSONResponse(content={"error": "No text provided."}, status_code=400)
 
     # 2. Clean text
     cleaned_text = clean_text(raw_text)
