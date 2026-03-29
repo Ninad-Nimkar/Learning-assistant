@@ -180,7 +180,7 @@ body {
     align-items: center;
     gap: 28px;
     position: relative;
-    z-index: 10;
+    z-index: 100;
     animation: fadeInUp 0.8s var(--ease-out) 0.1s both;
 }
 
@@ -564,6 +564,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 24px;
+    position: relative;
+    z-index: 10;
     animation: fadeInUp 0.7s var(--ease-out) both;
 }
 

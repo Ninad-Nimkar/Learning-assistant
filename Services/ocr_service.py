@@ -20,7 +20,7 @@ def extract_text(file_bytes: bytes, filename) -> str:
 
     #Image handeling
     else:
-        base64_image = base64.b64decode(file_bytes).decode("utf-8")
+        base64_image = base64.b64encode(file_bytes).decode("utf-8")
 
         response = client.chat.completions.create(
             model="gpt-4o-mini",
