@@ -150,6 +150,10 @@
             // Show output
             outputSection.classList.remove('hidden');
 
+            // Clear input and disable button
+            textInput.value = '';
+            btnGenerate.disabled = true;
+
             // Reset player state
             resetPlayer();
         } catch (err) {

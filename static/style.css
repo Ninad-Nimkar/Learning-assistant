@@ -147,11 +147,12 @@ body {
 }
 
 .header__icon {
-    width: 32px;
-    height: 32px;
+    width: 52px;
+    height: 52px;
     object-fit: contain;
-    color: var(--accent);
-    filter: drop-shadow(0 0 8px var(--accent-glow));
+    border-radius: 8px;
+    mix-blend-mode: lighten;
+    filter: drop-shadow(0 0 10px var(--accent-glow));
 }
 
 .header__title {
